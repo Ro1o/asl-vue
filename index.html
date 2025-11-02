@@ -210,7 +210,8 @@
       getImageUrl(imagePath) {
         if (!imagePath) return 'https://via.placeholder.com/400x200?text=Lesson+Image';
         if (imagePath.startsWith('http')) return imagePath;
-        return `http://localhost:8080${imagePath}`;
+        return `https://asl-express.onrender.com${imagePath}`;
+
       },
 
       toggleTheme() {
@@ -229,18 +230,19 @@
         }, 500);
       },
       fetchLessons() {
-        fetch("http://localhost:8080/lessons")
-          .then(res => res.json())
-          .then(data => {
-            this.lessons = data;
-            this.loading = false;
-            this.sortLessons();
-          });
+        fetch("https://asl-express.onrender.com/lessons")
+  .then(res => res.json())
+  .then(data => {
+    this.lessons = data;
+    this.loading = false;
+    this.sortLessons();
+  });
       },
       fetchOrders() {
-        fetch("http://localhost:8080/orders")
-          .then(res => res.json())
-          .then(data => { this.orders = data; });
+       fetch("https://asl-express.onrender.com/orders")
+  .then(res => res.json())
+  .then(data => { this.orders = data; });
+
       },
       addToCart(lesson) {
         if (lesson.space > 0) {
@@ -285,14 +287,15 @@
           phone: this.checkoutPhone
         }));
         Promise.all(
-          orders.map(order =>
-            fetch("http://localhost:8080/orders", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(order)
-            })
-          )
-        )
+  orders.map(order =>
+    fetch("https://asl-express.onrender.com/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(order)
+    })
+  )
+)
+
           .then(() => {
             this.showSuccessPopup();
             this.cart = [];
