@@ -1,13 +1,322 @@
 <!DOCTYPE html>
-<html lang="">
-  <head>
-    <meta charset="UTF-8">
-    <link rel="icon" href="/favicon.ico">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vite App</title>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/main.js"></script>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ASL | After School Lessons</title>
+
+  <!-- Vue -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <div id="app">
+
+    <!-- 🧭 Navbar -->
+    <header class="main-navbar">
+      <div class="logo" @click="goHome">ASL</div>
+
+      <div class="search-container">
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="🔍 Search lessons by subject, location, or price..."
+          @input="handleTyping"
+        />
+      </div>
+
+      <div class="browse-icon" @click="toggleSortMenu">
+        <img src="https://img.icons8.com/ios-glyphs/30/filter.png" alt="Browse/Sort" />
+      </div>
+
+      <button class="cart-btn" @click="currentView='cart'">
+        🛒 <span v-if="cart.length">({{ cart.length }})</span>
+      </button>
+
+      <div id="theme-toggle" @click="toggleTheme">
+        <div class="icon">
+          <div class="sun" v-if="!darkMode">☀️</div>
+          <div class="moon" v-else>🌙</div>
+        </div>
+      </div>
+    </header>
+
+    <!-- 🔽 Sort Menu (Custom Dropdown) -->
+    <div v-if="showSortMenu" class="sort-menu">
+      <label>Sort by:</label>
+
+      <!-- Custom Dropdown -->
+      <div class="dropdown" @click="dropdownOpen = !dropdownOpen">
+        <div class="dropdown-selected">
+          <span v-if="sortKey === 'topic'">🧠 Subject</span>
+          <span v-else-if="sortKey === 'location'">📍 Location</span>
+          <span v-else-if="sortKey === 'price'">💷 Price</span>
+          <span v-else-if="sortKey === 'space'">👥 Spaces</span>
+          <span class="arrow">{{ dropdownOpen ? '▲' : '▼' }}</span>
+        </div>
+
+        <ul v-show="dropdownOpen" class="dropdown-menu">
+          <li @click="setSort('topic')">🧠 Subject</li>
+          <li @click="setSort('location')">📍 Location</li>
+          <li @click="setSort('price')">💷 Price</li>
+          <li @click="setSort('space')">👥 Spaces</li>
+        </ul>
+      </div>
+
+      <button @click="toggleSortOrder">
+        {{ sortOrder === 'asc' ? '⇧ Ascending' : '⇩ Descending' }}
+      </button>
+    </div>
+
+    <!-- 📚 Lessons Section -->
+    <div v-if="currentView === 'lessons'">
+      <p v-if="loading">Loading lessons...</p>
+      <div v-if="filteredLessons.length === 0 && !loading && searchQuery">
+        <p>No results found for "<strong>{{ searchQuery }}</strong>".</p>
+      </div>
+
+      <!-- 🧱 Lessons Grid -->
+      <div class="lessons-container">
+        <div v-for="lesson in filteredLessons" :key="lesson._id" class="lesson-card">
+          
+          <!-- 🔹 Image + Available Badge -->
+          <div class="lesson-image">
+            <img :src="getImageUrl(lesson.image)" :alt="lesson.topic" />
+            <span class="lesson-available">{{ lesson.space }} spaces</span>
+          </div>
+
+          <!-- 🔹 Lesson Details -->
+          <div class="lesson-content">
+            <h2>{{ lesson.topic }}</h2>
+            <p><strong>Teacher:</strong> {{ lesson.teacher }}</p>
+            <p><strong>Location:</strong> {{ lesson.location }}</p>
+          </div>
+
+          <!-- 🔹 Footer (Price + Add Button) -->
+          <div class="lesson-footer">
+            <div class="price">£{{ lesson.price }}</div>
+            <button @click="addToCart(lesson)" :disabled="lesson.space <= 0">
+              {{ lesson.space > 0 ? '+ Add' : 'Full' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 🛒 Cart Section -->
+    <div v-if="currentView === 'cart'">
+      <h2>🧺 Shopping Cart</h2>
+      <div v-if="cart.length === 0">
+        <p>Your cart is empty.</p>
+      </div>
+
+      <div v-if="cart.length > 0" class="cart-total">
+        <h3>Total: £{{ cartTotal }}</h3>
+      </div>
+
+      <div v-for="(item, index) in cart" :key="index" class="order-card">
+        <h3>{{ item.topic }}</h3>
+        <p><strong>Location:</strong> {{ item.location }}</p>
+        <p><strong>Price:</strong> £{{ item.price }}</p>
+        <button @click="removeFromCart(index)">❌ Remove</button>
+      </div>
+
+      <div v-if="cart.length > 0" class="checkout-form">
+        <h3>🧾 Secure Checkout</h3>
+        <div class="input-wrapper">
+          <div class="floating-input">
+            <label>Full Name</label>
+            <input type="text" v-model="checkoutName" placeholder="e.g. James" required />
+          </div>
+
+          <div class="floating-input">
+            <label>Phone Number</label>
+            <input type="text" v-model="checkoutPhone" placeholder="e.g. 5422975" required />
+          </div>
+        </div>
+
+        <button @click="checkout" :disabled="!validName || !validPhone">
+          Confirm Order
+        </button>
+      </div>
+    </div>
+
+    <!-- 📦 Orders Section -->
+    <div v-if="currentView === 'orders'">
+      <h2>🧾 My Orders</h2>
+      <p v-if="orders.length === 0">No orders found.</p>
+      <div v-for="order in orders" :key="order._id" class="order-card">
+        <p><strong>Lesson ID:</strong> {{ order.lessonId }}</p>
+        <p><strong>Name:</strong> {{ order.name }}</p>
+        <p><strong>Phone:</strong> {{ order.phone }}</p>
+        <p><strong>Date:</strong> {{ new Date(order.date).toLocaleString() }}</p>
+      </div>
+    </div>
+
+    <!-- ✅ Popup -->
+    <div v-if="showPopup" class="popup-message">
+      ✅ Order placed successfully!
+    </div>
+
+    <p class="message">{{ message }}</p>
+  </div>
+
+  <script>
+  new Vue({
+    el: "#app",
+    data: {
+      lessons: [],
+      orders: [],
+      cart: [],
+      loading: true,
+      currentView: "lessons",
+      message: "",
+      darkMode: false,
+      sortKey: "topic",
+      sortOrder: "asc",
+      checkoutName: "",
+      checkoutPhone: "",
+      showPopup: false,
+      searchQuery: "",
+      typing: false,
+      showSortMenu: false,
+      dropdownOpen: false
+    },
+    computed: {
+      validName() { return /^[A-Za-z\\s]+$/.test(this.checkoutName); },
+      validPhone() { return /^[0-9]+$/.test(this.checkoutPhone); },
+      cartTotal() { return this.cart.reduce((sum, item) => sum + item.price, 0); },
+      filteredLessons() {
+        const query = this.searchQuery.toLowerCase();
+        return this.lessons.filter(lesson =>
+          lesson.topic.toLowerCase().includes(query) ||
+          lesson.location.toLowerCase().includes(query) ||
+          lesson.price.toString().includes(query)
+        );
+      }
+    },
+    mounted() {
+      this.fetchLessons();
+      this.fetchOrders();
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme === "dark") {
+        this.darkMode = true;
+        document.body.classList.add("dark");
+      }
+    },
+    methods: {
+      // 🖼 Fix image URLs to load from backend
+      getImageUrl(imagePath) {
+        if (!imagePath) return 'https://via.placeholder.com/400x200?text=Lesson+Image';
+        if (imagePath.startsWith('http')) return imagePath;
+        return `http://localhost:8080${imagePath}`;
+      },
+
+      toggleTheme() {
+        this.darkMode = !this.darkMode;
+        localStorage.setItem("theme", this.darkMode ? "dark" : "light");
+        document.body.classList.toggle("dark", this.darkMode);
+      },
+      toggleSortMenu() {
+        this.showSortMenu = !this.showSortMenu;
+      },
+      handleTyping() {
+        this.typing = true;
+        clearTimeout(this.typeTimer);
+        this.typeTimer = setTimeout(() => {
+          this.typing = false;
+        }, 500);
+      },
+      fetchLessons() {
+        fetch("http://localhost:8080/lessons")
+          .then(res => res.json())
+          .then(data => {
+            this.lessons = data;
+            this.loading = false;
+            this.sortLessons();
+          });
+      },
+      fetchOrders() {
+        fetch("http://localhost:8080/orders")
+          .then(res => res.json())
+          .then(data => { this.orders = data; });
+      },
+      addToCart(lesson) {
+        if (lesson.space > 0) {
+          this.cart.push(lesson);
+          lesson.space--;
+        }
+      },
+      removeFromCart(index) {
+        const lesson = this.cart[index];
+        lesson.space++;
+        this.cart.splice(index, 1);
+      },
+      setSort(key) {
+        this.sortKey = key;
+        this.dropdownOpen = false;
+        this.sortLessons();
+      },
+      sortLessons() {
+        const key = this.sortKey;
+        const order = this.sortOrder;
+        this.lessons.sort((a, b) => {
+          let valA = a[key], valB = b[key];
+          if (typeof valA === "string") valA = valA.toLowerCase();
+          if (typeof valB === "string") valB = valB.toLowerCase();
+          if (valA < valB) return order === "asc" ? -1 : 1;
+          if (valA > valB) return order === "asc" ? 1 : -1;
+          return 0;
+        });
+      },
+      toggleSortOrder() {
+        this.sortOrder = this.sortOrder === "asc" ? "desc" : "asc";
+        this.sortLessons();
+      },
+      checkout() {
+        if (!this.validName || !this.validPhone) {
+          this.message = "⚠️ Please enter valid details.";
+          return;
+        }
+        const orders = this.cart.map(item => ({
+          lessonId: item._id,
+          name: this.checkoutName,
+          phone: this.checkoutPhone
+        }));
+        Promise.all(
+          orders.map(order =>
+            fetch("http://localhost:8080/orders", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(order)
+            })
+          )
+        )
+          .then(() => {
+            this.showSuccessPopup();
+            this.cart = [];
+            this.checkoutName = "";
+            this.checkoutPhone = "";
+            this.fetchLessons();
+            this.fetchOrders();
+          })
+          .catch(() => {
+            this.message = "⚠️ Failed to submit order.";
+          });
+      },
+      showSuccessPopup() {
+        this.showPopup = true;
+        setTimeout(() => { this.showPopup = false; }, 2500);
+      },
+      goHome() {
+        this.currentView = 'lessons';
+        this.searchQuery = '';
+        this.showSortMenu = false;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }
+  });
+  </script>
+</body>
 </html>

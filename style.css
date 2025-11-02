@@ -1,0 +1,748 @@
+/* 🌗 THEME TOGGLE — aligned with navbar but outside */
+#theme-toggle {
+  position: absolute;
+  right: -65px; /* Adjust this if needed */
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  border-radius: 10px;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 4px 12px var(--shadow);
+  transition: all 0.3s ease;
+  z-index: 5;
+}
+
+#theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 0 20px var(--glow);
+}
+
+.icon {
+  font-size: 1.2rem;
+  color: var(--text);
+}
+
+/* 🌞 LIGHT MODE COLORS */
+body {
+  --bg: radial-gradient(circle at center, #f8f9fc, #e0e6ef, #d7dde5);
+  --text: #111;
+  --card-bg: rgba(255, 255, 255, 0.5);
+  --shadow: rgba(0, 0, 0, 0.15);
+  --glow: rgba(255, 255, 255, 0.5);
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.6s, color 0.6s;
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* 🌙 DARK MODE COLORS — true black & grey */
+body.dark {
+  --bg: radial-gradient(circle at center, #000000, #0a0a0a, #1a1a1a);
+  --text: #f1f1f1;
+  --card-bg: rgba(28, 28, 28, 0.85);
+  --shadow: rgba(0, 0, 0, 0.6);
+  --glow: rgba(255, 255, 255, 0.15);
+  background: var(--bg);
+  color: var(--text);
+  transition: background 0.5s ease, color 0.5s ease;
+}
+
+#app {
+  max-width: 1200px;
+  margin: 3rem auto;
+  text-align: center;
+  padding: 1.5rem;
+  animation: fadeIn 1s ease forwards;
+}
+
+/* 🌐 MODERN NAVBAR */
+.main-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 0.8rem 2rem;
+  border-radius: 14px;
+  margin: 0 auto 2rem;
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 8px 25px var(--shadow);
+  max-width: 900px;
+  transition: all 0.4s ease;
+}
+body.dark .main-navbar {
+  background: rgba(20, 20, 20, 0.85);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* 🏫 ASL Logo */
+.main-navbar .logo {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--text);
+  text-shadow: 0 0 10px var(--glow);
+  cursor: pointer;
+  transition: transform 0.3s ease, text-shadow 0.3s ease;
+}
+.main-navbar .logo:hover {
+  transform: scale(1.08);
+  text-shadow: 0 0 10px var(--glow);
+}
+
+/* 🔍 Center Search Bar */
+.search-container {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+.search-container input {
+  width: 70%;
+  padding: 0.7rem 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  color: var(--text);
+  font-size: 1rem;
+  box-shadow: 0 4px 15px var(--shadow);
+  transition: all 0.3s ease;
+}
+.search-container input::placeholder {
+  color: rgba(60, 60, 60, 0.6);
+}
+body.dark .search-container input::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+}
+.search-container input:focus {
+  outline: none;
+  border-color: #00ff9d;
+  transform: scale(1.03);
+  box-shadow: 0 0 20px rgba(0, 255, 157, 0.3);
+}
+
+/* ⚙️ Browse Icon */
+.browse-icon {
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px var(--shadow);
+  transition: all 0.3s ease;
+}
+.browse-icon:hover {
+  background: rgba(255, 255, 255, 0.4);
+  transform: scale(1.1);
+  box-shadow: 0 0 20px var(--glow);
+}
+.browse-icon img {
+  width: 22px;
+  filter: invert(10%);
+}
+body.dark .browse-icon img {
+  filter: invert(90%);
+}
+
+/* ===== SORT MENU CONTAINER ===== */
+.sort-menu {
+  position: relative; /* ensures dropdown positions correctly */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  box-shadow: 0 6px 25px var(--shadow);
+  padding: 1rem 1.6rem;
+  width: fit-content;
+  margin: 1.5rem auto 2.5rem auto; /* extra bottom space to prevent overlap */
+  color: var(--text);
+  font-weight: 500;
+  font-size: 1rem;
+  backdrop-filter: blur(20px);
+  transition: all 0.3s ease;
+  z-index: 5; /* ensures sort menu sits above lessons */
+}
+
+
+.sort-menu:hover {
+  box-shadow: 0 12px 35px var(--shadow);
+  transform: translateY(-3px);
+}
+
+.sort-menu label {
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--text);
+}
+/* ===== CUSTOM DROPDOWN (OPAQUE BACKGROUND) ===== */
+.dropdown {
+  position: relative;
+  display: inline-block;
+  width: 180px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+}
+
+.dropdown-selected {
+  background: var(--card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 12px;
+  padding: 0.6rem 1rem;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+}
+
+body.dark .dropdown-selected {
+  background: #181818;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+}
+
+.dropdown-selected:hover {
+  transform: scale(1.03);
+  border-color: rgba(37, 99, 235, 0.6);
+  box-shadow: 0 0 18px rgba(37, 99, 235, 0.35);
+}
+
+.dropdown .arrow {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  transition: transform 0.2s ease;
+}
+
+.dropdown.open .arrow {
+  transform: rotate(180deg);
+}
+
+/* ===== DROPDOWN MENU (NO OVERLAP, HIGHER STACK) ===== */
+.dropdown-menu {
+  position: absolute;
+  top: 115%;
+  left: 0;
+  width: 100%;
+  background: #fff; /* opaque for light mode */
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+  list-style: none;
+  padding: 0.4rem 0;
+  margin: 0;
+  z-index: 1000; /* always above lesson cards */
+  animation: fadeIn 0.25s ease;
+}
+body.dark .dropdown-menu {
+  background: #222;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.45);
+}
+.dropdown-menu li {
+  padding: 0.65rem 1rem;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.95rem;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.dropdown-menu li:hover {
+  background: rgba(37, 99, 235, 0.15);
+  color: #2563eb;
+  transform: translateX(3px);
+}
+
+
+/* Ascending / Descending Button */
+.sort-menu button {
+  background: #2563eb;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.95rem;
+  border-radius: 10px;
+  padding: 0.6rem 1.2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+}
+
+.sort-menu button:hover {
+  background: #1d4ed8;
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(37, 99, 235, 0.45);
+}
+
+/* Optional FadeIn Animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ===== LESSON GRID LAYOUT ===== */
+.lessons-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  justify-content: center;
+  align-items: start;
+  width: 100%;
+  max-width: 1400px;
+  margin: 40px auto;
+  padding: 0 40px;
+}
+
+/* ===== LESSON CARD ===== */
+.lesson-card {
+  background: #181818;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.4s ease;
+}
+
+.lesson-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+}
+
+/* 🌤 LIGHT MODE VARIANT */
+body:not(.dark) .lesson-card {
+  background: #ffffff;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  color: #111;
+}
+
+body:not(.dark) .lesson-card:hover {
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+}
+
+/* ===== TOP IMAGE SECTION ===== */
+.lesson-image {
+  position: relative;
+  width: 100%;
+  height: 160px;
+  overflow: hidden;
+}
+
+.lesson-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* ===== AVAILABLE BADGE ===== */
+.lesson-available {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #3cb371;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== CARD CONTENT ===== */
+.lesson-content {
+  padding: 16px 20px;
+  color: #fff;
+  transition: color 0.3s ease;
+}
+
+.lesson-content h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.lesson-content p {
+  margin: 3px 0;
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+/* 🕊 LIGHT MODE TEXT COLOR */
+body:not(.dark) .lesson-content {
+  color: #111;
+}
+
+body:not(.dark) .lesson-content p {
+  opacity: 0.9;
+}
+
+/* ===== PRICE + BUTTON ROW ===== */
+.lesson-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px 18px 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  transition: border-color 0.3s ease;
+}
+
+.lesson-footer .price {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #f0f0f0;
+}
+
+.lesson-footer button {
+  background: #2563eb;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.lesson-footer button:hover {
+  background: #1d4ed8;
+  transform: scale(1.05);
+}
+
+/* 🌤 LIGHT MODE FOOTER */
+body:not(.dark) .lesson-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+body:not(.dark) .lesson-footer .price {
+  color: #111;
+}
+
+/* ===== RESPONSIVE GRID ===== */
+@media (max-width: 1200px) {
+  .lessons-container {
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .lessons-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 500px) {
+  .lessons-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* 🧾 TEXT */
+h1 { margin-bottom: 1rem; letter-spacing: 1px; font-weight: 600; }
+h2 { margin: 0.3rem 0; }
+p { margin: 0.2rem 0; }
+
+/* ✅ MESSAGES */
+.message {
+  margin-top: 1.5rem;
+  color: limegreen;
+  font-weight: bold;
+}
+
+/* 🌈 ANIMATIONS */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideUp {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: translateY(-20px); }
+  10%, 90% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-20px); }
+}
+
+/* 🧮 CART TOTAL */
+.cart-total {
+  margin: 1.2rem auto;
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
+  width: 180px;
+  padding: 0.6rem 1rem;
+  box-shadow: 0 4px 15px var(--shadow);
+  animation: fadeIn 0.8s ease forwards;
+  text-align: center;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+.cart-total:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 10px 30px var(--shadow);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* 🌟 Checkout, Inputs, Popup */
+.checkout-form { background: var(--card-bg); backdrop-filter: blur(20px); border-radius: 20px; border: 1px solid rgba(255,255,255,0.25); box-shadow: 0 10px 30px var(--shadow); padding: 2rem; margin: 2rem auto; width: 90%; max-width: 650px; text-align: center; animation: fadeIn 0.8s ease; }
+.input-wrapper { display: flex; justify-content: center; align-items: flex-start; gap: 3rem; flex-wrap: wrap; margin-top: 1.5rem; }
+.floating-input { position: relative; width: 280px; text-align: left; display: flex; flex-direction: column; }
+.floating-input input { width: 100%; padding: 0.9rem 1rem; border-radius: 12px; background: rgba(255,255,255,0.25); border: 1px solid rgba(255,255,255,0.3); font-size: 1rem; color: var(--text); outline: none; transition: all 0.3s ease; backdrop-filter: blur(8px); }
+body.dark .floating-input input { background: rgba(40,40,40,0.6); border: 1px solid rgba(255,255,255,0.1); }
+.floating-input label { position: absolute; top: -12px; left: 8px; color: var(--text); font-size: 0.85rem; font-weight: 500; }
+.checkout-form button { background: rgba(255,255,255,0.25); border-radius: 12px; border: 1px solid rgba(255,255,255,0.3); padding: 0.8rem 1.6rem; color: var(--text); font-weight: 600; margin-top: 1.5rem; transition: all 0.3s ease; box-shadow: 0 4px 15px var(--shadow); }
+.checkout-form button:hover { transform: scale(1.05); background: rgba(255,255,255,0.45); box-shadow: 0 0 25px rgba(255,255,255,0.35); }
+.popup-message { position: fixed; top: 20px; right: 20px; background: var(--card-bg); color: var(--text); padding: 1rem 1.5rem; border-radius: 12px; box-shadow: 0 8px 20px var(--shadow); border: 1px solid rgba(255,255,255,0.25); font-weight: 600; font-size: 1rem; animation: fadeInOut 2.5s ease forwards; backdrop-filter: blur(15px); z-index: 100; }
+
+/* ✨ Typing Feedback */
+.typing-feedback {
+  margin-top: 0.6rem;
+  color: var(--text);
+  font-size: 0.9rem;
+  opacity: 0.8;
+  animation: fadeIn 0.3s ease;
+}
+
+/* 🛒 Cart Button */
+.cart-btn {
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  padding: 0.6rem 1.2rem;
+  color: var(--text);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px var(--shadow);
+}
+.cart-btn:hover {
+  background: rgba(255, 255, 255, 0.45);
+  transform: scale(1.08);
+  box-shadow: 0 0 25px var(--glow);
+}
+.cart-btn span {
+  font-weight: 700;
+}
+
+/* 🧮 CART TOTAL */
+.cart-total {
+  margin: 1.5rem auto;
+  background: var(--card-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  width: fit-content;
+  padding: 0.8rem 1.8rem;
+  box-shadow: 0 6px 20px var(--shadow);
+  animation: fadeIn 0.8s ease forwards;
+  text-align: center;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+.cart-total:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 10px 30px var(--shadow);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* 🗂 ORDER CARD (each item in cart) */
+.order-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 16px;
+  padding: 1.5rem 2rem;
+  margin: 1rem auto;
+  width: 90%;
+  max-width: 700px;
+  text-align: center;
+  box-shadow: 0 6px 18px var(--shadow);
+  color: var(--text);
+  transition: all 0.3s ease;
+}
+.order-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px var(--shadow);
+}
+
+.order-card h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.order-card p {
+  margin: 0.3rem 0;
+  font-size: 0.95rem;
+}
+
+/* 🗑 REMOVE BUTTON — matches +Add button style */
+.order-card button {
+  background: #2563eb;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 0.7rem 1.3rem;
+  cursor: pointer;
+  margin-top: 0.8rem;
+  transition: background 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+.order-card button:hover {
+  background: #1d4ed8;
+  transform: scale(1.05);
+  box-shadow: 0 0 25px rgba(37, 99, 235, 0.4);
+}
+.order-card button:active {
+  transform: scale(0.96);
+}
+
+/* 🌟 CHECKOUT FORM */
+.checkout-form {
+  background: var(--card-bg);
+  backdrop-filter: blur(25px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 10px 30px var(--shadow);
+  padding: 2.5rem;
+  margin: 2rem auto;
+  width: 90%;
+  max-width: 750px;
+  text-align: center;
+  animation: fadeIn 0.8s ease;
+  color: var(--text);
+}
+
+.checkout-form h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+/* 📋 INPUT LAYOUT */
+.input-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3rem;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.floating-input {
+  position: relative;
+  width: 280px;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+}
+
+.floating-input label {
+  position: absolute;
+  top: -12px;
+  left: 8px;
+  color: var(--text);
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.floating-input input {
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-size: 1rem;
+  color: var(--text);
+  outline: none;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(8px);
+}
+body.dark .floating-input input {
+  background: rgba(40, 40, 40, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.floating-input input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 10px rgba(37, 99, 235, 0.2);
+}
+
+/* ✅ CONFIRM BUTTON */
+.checkout-form button {
+  background: #2563eb;
+  border: none;
+  border-radius: 12px;
+  padding: 0.9rem 1.8rem;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 1.5rem;
+  box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+  transition: all 0.3s ease;
+}
+.checkout-form button:hover {
+  transform: scale(1.05);
+  background: #1d4ed8;
+  box-shadow: 0 0 25px rgba(37, 99, 235, 0.4);
+}
+.checkout-form button:disabled {
+  background: rgba(150, 150, 150, 0.4);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* 🪄 POPUP MESSAGE */
+.popup-message {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--card-bg);
+  color: var(--text);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px var(--shadow);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-weight: 600;
+  font-size: 1rem;
+  animation: fadeInOut 2.5s ease forwards;
+  backdrop-filter: blur(15px);
+  z-index: 100;
+}
